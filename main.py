@@ -8,6 +8,9 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import albumentations as A
+import os
+import io
+from flask import send_file
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 keypoints_classes_ids2names = {0: 'Carina' , 1: 'ETT'}
@@ -74,37 +77,83 @@ def test_valid_transform():
 
 best_model = load_model(get_model(), "D:\ET_Tube\CheXpert-v1.0\checkpoints\checkpoint__1_5.pt")
 
-with torch.inference_mode():
-    best_model.to(device)
-    best_model.eval()
+file_name = r"A-chest-x-ray-showing-correct-endotracheal-tube-placement-and-no-acute-lung-pathology.png"
 
-    test_img_file = r"C:\Users\nprim\Downloads\A-chest-x-ray-showing-correct-endotracheal-tube-placement-and-no-acute-lung-pathology.png"
-    raw_img = cv2.imread(test_img_file)
-    raw_img_processed = test_valid_transform()(image=raw_img)
+def getPrediction(file_name):
+    with torch.inference_mode():
+        best_model.to(device)
+        best_model.eval()
 
-    raw_img_processed = raw_img_processed["image"]
-    raw_img_processed = torch.from_numpy(raw_img_processed).permute(2,0,1).float().to(device)
-    raw_img_processed = raw_img_processed.float() / 255.0
+        test_img_file = rf"static/images/" + file_name
+        print(test_img_file)
+        raw_img = cv2.imread(test_img_file)
+        raw_img_processed = test_valid_transform()(image=raw_img)
 
-    output = best_model([raw_img_processed])
+        raw_img_processed = raw_img_processed["image"]
+        raw_img_processed = torch.from_numpy(raw_img_processed).permute(2,0,1).float().to(device)
+        raw_img_processed = raw_img_processed.float() / 255.0
+
+        output = best_model([raw_img_processed])
 
 
-    scores = output[0]['scores'].detach().cpu().numpy()
-    high_scores_idxs = np.where(scores > 0.1)[0].tolist() # Indexes of boxes with scores > 0.1
-    post_nms_idxs = torchvision.ops.nms(output[0]['boxes'][high_scores_idxs], output[0]['scores'][high_scores_idxs], 0.3).cpu().numpy() # Indexes of boxes left after applying NMS (iou_threshold=0.3)
-    keypoint_scores = output[0]['keypoints_scores'][post_nms_idxs]
-    score_idx = get_best_keypoints(keypoint_scores)
+        scores = output[0]['scores'].detach().cpu().numpy()
+        high_scores_idxs = np.where(scores > 0.1)[0].tolist() # Indexes of boxes with scores > 0.1
+        post_nms_idxs = torchvision.ops.nms(output[0]['boxes'][high_scores_idxs], output[0]['scores'][high_scores_idxs], 0.3).cpu().numpy() # Indexes of boxes left after applying NMS (iou_threshold=0.3)
+        keypoint_scores = output[0]['keypoints_scores'][post_nms_idxs]
+        score_idx = get_best_keypoints(keypoint_scores)
 
-    keypoints = output[0]['keypoints'][score_idx].detach().cpu().numpy()
+        keypoints = output[0]['keypoints'][score_idx].detach().cpu().numpy()
 
-    raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
-    for idx, kp in enumerate(keypoints):
-            current_keypoint = kp[:2].astype(int)
-            print(current_keypoint)
-            raw_img = cv2.circle(raw_img.copy(), current_keypoint, 1, (255,255,0), 10)
+        raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
+        for idx, kp in enumerate(keypoints):
+                current_keypoint = kp[:2].astype(int)
+                print(current_keypoint)
+                raw_img = cv2.circle(raw_img.copy(), current_keypoint, 1, (255,255,0), 10)
 
-            cv2.putText(raw_img, " " + keypoints_classes_ids2names[idx], current_keypoint, cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0), 1, cv2.LINE_AA)
+                cv2.putText(raw_img, " " + keypoints_classes_ids2names[idx], current_keypoint, cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0), 1, cv2.LINE_AA)
 
-    plt.figure(figsize=(10,10))
-    plt.imshow(raw_img)
-    plt.show()
+        plt.figure(figsize=(10,10))
+        plt.imshow(raw_img)
+        plt.show()
+
+
+
+def getPrediction(file_name):
+    with torch.inference_mode():
+        best_model.to(device)
+        best_model.eval()
+
+        test_img_file = rf"static/images/" + file_name
+        print(test_img_file)
+        raw_img = cv2.imread(test_img_file)
+        raw_img_processed = test_valid_transform()(image=raw_img)
+
+        raw_img_processed = raw_img_processed["image"]
+        raw_img_processed = torch.from_numpy(raw_img_processed).permute(2,0,1).float().to(device)
+        raw_img_processed = raw_img_processed.float() / 255.0
+
+        output = best_model([raw_img_processed])
+
+
+        scores = output[0]['scores'].detach().cpu().numpy()
+        high_scores_idxs = np.where(scores > 0.1)[0].tolist() # Indexes of boxes with scores > 0.1
+        post_nms_idxs = torchvision.ops.nms(output[0]['boxes'][high_scores_idxs], output[0]['scores'][high_scores_idxs], 0.3).cpu().numpy() # Indexes of boxes left after applying NMS (iou_threshold=0.3)
+        keypoint_scores = output[0]['keypoints_scores'][post_nms_idxs]
+        score_idx = get_best_keypoints(keypoint_scores)
+
+        keypoints = output[0]['keypoints'][score_idx].detach().cpu().numpy()
+
+        raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
+        for idx, kp in enumerate(keypoints):
+                current_keypoint = kp[:2].astype(int)
+                raw_img = cv2.circle(raw_img.copy(), current_keypoint, 1, (255,255,0), 10)
+                cv2.putText(raw_img, " " + keypoints_classes_ids2names[idx], current_keypoint, cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0), 1, cv2.LINE_AA)
+        
+        is_success, buffer = cv2.imencode(".png", raw_img)
+        if is_success:
+            img_io = io.BytesIO(buffer)
+            return img_io
+        else:
+            return "Error processing image", 500
+
+#getPrediction(file_name)

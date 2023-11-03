@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  
+  <!-- Make it compatible to mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ET Tube Location Prediction</title>
+</head>
+
+<body style="background: #000;">
+
+<h2 style="color:rgb(255, 255, 255);">ET Tube Location Prediction</h2>
+<h4 style="color:rgb(255, 255, 255);">Upload an image and click submit</h4>
+
+<form method="post" action="/" enctype="multipart/form-data">
+    <dl>
+	    <p style="color:Violet;">
+		    <input type="file" name="file" autocomplete="off" required>
+	    </p>
+    </dl>
+    <p style="color:Violet;">
+	    <input type="submit" name="submit" value="Submit">
+    </p>
+</form>
+
+<p style="color:MediumSeaGreen;">
+	<!-- Displaying the image directly -->
+    <img id="processedImage" width="300" height="225">
+    <script>
+      document.getElementById("processedImage").src = window.location.href;
+    </script>
+</p>
+
+</body>
+</html>
