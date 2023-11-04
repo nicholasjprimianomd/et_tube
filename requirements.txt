@@ -1,4 +1,4 @@
-torch==2.1.0.dev20230506
+torch==2.1.0
 torchvision==0.16.0.dev20230507
 opencv-python==4.6.0
 albumentations==1.3.0
