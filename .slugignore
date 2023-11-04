@@ -1,0 +1,12 @@
+README.md
+clean_network.ipynb
+coco_eval.py
+coco_utils.py
+engine.py
+group_by_aspect_ratio.py
+network.ipynb
+preprocess.ipynb
+presets.py
+train.py
+utils.py
+transforms.py
