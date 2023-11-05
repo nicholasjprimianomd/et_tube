@@ -3,7 +3,7 @@ import torchvision
 from torchvision.models.detection.rpn import AnchorGenerator
 from torchvision.models.detection import KeypointRCNN
 import cv2
-import albumentations as A
+#import albumentations as A
 import numpy as np
 import io
 from flask import send_file
@@ -56,12 +56,6 @@ def load_model(model, weights_path):
 
 IMG_SIZE = 456
 
-def test_valid_transform():
-    return A.Compose([
-        A.Sequential([
-            A.CLAHE(clip_limit=(1,4), p=1),
-            A.Resize(IMG_SIZE, IMG_SIZE, p=1)
-        ], p=1)])
 
 url = 'https://github.com/nicholasprimiano/et_tube/releases/download/v0.1/production.pth'
 response = requests.get(url, allow_redirects=True)
@@ -73,6 +67,7 @@ with open('production.pth', 'wb') as f:
 
 best_model = load_model(get_model(), 'production.pth')
 
+
 def getPrediction(file_name):
     with torch.inference_mode():
         best_model.to(device)
@@ -81,10 +76,10 @@ def getPrediction(file_name):
         test_img_file = rf"static/images/" + file_name
         print(test_img_file)
         raw_img = cv2.imread(test_img_file)
-        raw_img_processed = test_valid_transform()(image=raw_img)
-
-        raw_img_processed = raw_img_processed["image"]
-        raw_img_processed = torch.from_numpy(raw_img_processed).permute(2,0,1).float().to(device)
+        raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
+        #raw_img_processed = test_valid_transform()(image=raw_img)
+        #raw_img_processed = raw_img_processed["image"]
+        raw_img_processed = torch.from_numpy(raw_img).permute(2,0,1).float().to(device)
         raw_img_processed = raw_img_processed.float() / 255.0
 
         output = best_model([raw_img_processed])
@@ -98,17 +93,19 @@ def getPrediction(file_name):
 
         keypoints = output[0]['keypoints'][score_idx].detach().cpu().numpy()
 
-        raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
+        
         for idx, kp in enumerate(keypoints):
                 current_keypoint = kp[:2].astype(int)
                 raw_img = cv2.circle(raw_img.copy(), current_keypoint, 1, (255,255,0), 10)
                 cv2.putText(raw_img, " " + keypoints_classes_ids2names[idx], current_keypoint, cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0), 1, cv2.LINE_AA)
         
         is_success, buffer = cv2.imencode(".png", raw_img)
+        #cv2.imshow('Image', raw_img)
+        #cv2.waitKey(0)
         if is_success:
             img_io = io.BytesIO(buffer)
             return img_io
         else:
             return "Error processing image", 500
 
-#getPrediction(file_name)
+#getPrediction("cxr.png")
