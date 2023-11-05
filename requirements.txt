@@ -1,6 +1,7 @@
 #torch==2.1.0+cpu
 #torchvision==0.16.0+cpu
-torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2 --index-url https://download.pytorch.org/whl/cpu
+https://download.pytorch.org/whl/torch/torch-2.1.0+cpu.cxx11.abi-cp310-cp310-linux_x86_64.whl
+https://download.pytorch.org/whl/torchvision/torchvision-0.16.0+cpu-cp39-cp39-linux_x86_64.whl
 opencv-python==4.6.0.66
 albumentations==1.3.0
 numpy==1.24.3
