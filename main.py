@@ -51,7 +51,7 @@ def get_best_keypoints(scores):
         return []
 
 def load_model(model, weights_path):
-    model_weights = torch.load(weights_path)
+    model_weights = torch.load(weights_path,  map_location=torch.device('cpu')) # CPU only for now
     model.load_state_dict(model_weights['model_state_dict'])
     return model
 
@@ -76,7 +76,7 @@ else:
         print(f"Failed to download {filename}. Status code: {response.status_code}")
 
 
-best_model = load_model(get_model(), 'production.pth', map_location=torch.device('cpu'))
+best_model = load_model(get_model(), 'production.pth')
 
 
 def getPrediction(file_name):
