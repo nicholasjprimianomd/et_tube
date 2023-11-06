@@ -6,7 +6,9 @@ import os
 
 #Save images to the 'static' folder as Flask serves images from this directory
 UPLOAD_FOLDER = 'static/images/'
-
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+    
 #Create an app object using the Flask class. 
 app = Flask(__name__, static_folder="static")
 
