@@ -75,9 +75,9 @@ else:
     else:
         print(f"Failed to download {filename}. Status code: {response.status_code}")
 
-
+print("Loading model...")
 best_model = load_model(get_model(), 'production.pth')
-
+print("Loaded model.")
 
 def getPrediction(file_name):
     with torch.inference_mode():
