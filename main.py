@@ -8,6 +8,7 @@ import numpy as np
 import io
 from flask import send_file
 import requests
+import os
 
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 keypoints_classes_ids2names = {0: 'Carina' , 1: 'ETT'}
@@ -58,14 +59,24 @@ IMG_SIZE = 456
 
 
 url = 'https://github.com/nicholasprimiano/et_tube/releases/download/v0.1/production.pth'
-response = requests.get(url, allow_redirects=True)
+filename = 'production.pth'
 
-# Save the content to a local file
-with open('production.pth', 'wb') as f:
-    f.write(response.content)
+# Check if the file already exists
+if os.path.exists(filename):
+    print(f"{filename} already exists.")
+else:
+    response = requests.get(url, allow_redirects=True)
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Save the content to a local file
+        with open(filename, 'wb') as f:
+            f.write(response.content)
+        print(f"Downloaded {filename} successfully.")
+    else:
+        print(f"Failed to download {filename}. Status code: {response.status_code}")
 
 
-best_model = load_model(get_model(), 'production.pth')
+best_model = load_model(get_model(), 'production.pth', map_location=torch.device('cpu'))
 
 
 def getPrediction(file_name):
