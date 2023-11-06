@@ -15,6 +15,7 @@
       flex-direction: column;
       align-items: center;
     }
+    
     h2, h4 {
       color: #ffffff; /* White text for headings */
     }
@@ -23,6 +24,7 @@
       padding: 20px;
       border-radius: 5px;
       box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+      
     }
     input[type="file"], input[type="submit"] {
       background: #333333; /* Dark grey input fields */
@@ -60,6 +62,30 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    .site-info {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #333; /* Dark background for the footer */
+    color: white; /* This will be the default text color */
+    text-align: center;
+    padding: 10px 0; /* Some padding at the top and bottom */
+    z-index: 100; /* Ensures the footer is above other elements */
+  }
+
+  /* Style for links within the site-info to ensure they are readable */
+  .site-info a {
+    color: #ffffff; /* White color for the links */
+    text-decoration: none; /* Removes underline from links */
+    padding: 0 10px; /* Add padding to space out the links */
+  }
+
+  /* Style for links on hover */
+  .site-info a:hover {
+    color: #cccccc; /* Lighter grey for hover effect */
+    text-decoration: underline; /* Adds underline on hover */
+  }
   </style>
 </head>
 <body>
@@ -105,7 +131,11 @@
     });
   });
 </script>
-
+<div class="site-info">
+  <a href="https://github.com/nicholasprimiano" target="_blank">Visit my GitHub</a>
+  | <!-- Separator can be removed if not needed -->
+  <a href="http://nickprimiano.com/wp-content/uploads/2023/11/CV_Nicholas_Primiano.pdf" target="_blank" download>Download My CV</a>
+</div>
 </body>
 </html>
 
