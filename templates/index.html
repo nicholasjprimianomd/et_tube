@@ -1,75 +1,14 @@
-<!--
 <!doctype html>
 <html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ET Tube Location Prediction</title>
-  <style>
-      img#processedImage {
-      max-width: 100%;
-      height: auto;
-      display: none; /* Start with the image not displayed */
-    }
-  </style>
-</head>
-<body>
-
-<h2>ET Tube Location Prediction</h2>
-<h4>Upload an image and click submit</h4>
-
-<form id="uploadForm" method="post" enctype="multipart/form-data">
-    <dl>
-      <p>
-        <input type="file" name="file" autocomplete="off" required>
-      </p>
-    </dl>
-    <p>
-      <input type="submit" value="Submit">
-    </p>
-</form>
-
-<p class="green">
-    <img id="processedImage" style="display:none;"/>
-</p>
-
-<script>
-  document.getElementById('uploadForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const formData = new FormData(this);
-    fetch('/', {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => response.blob()) // Assuming the server sends back image data as a blob
-    .then(imageBlob => {
-      // Create a local URL from the image blob and set it as the src of the image tag
-      const imageObjectURL = URL.createObjectURL(imageBlob);
-      const imageElement = document.getElementById('processedImage');
-      imageElement.src = imageObjectURL;
-      imageElement.style.display = 'block'; // Show the image element
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  });
-</script>
-
-</body>
-</html>
--->
-
-<!doctype html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ET Tube Location Prediction</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
   <style>
     body {
       font-family: 'Arial', sans-serif;
-      background: #f7f7f7;
+      background: #2D2D2D; /* Dark grey background */
+      color: #e0e0e0; /* Light grey text */
       margin: 0;
       padding: 20px;
       display: flex;
@@ -77,25 +16,40 @@
       align-items: center;
     }
     h2, h4 {
-      color: #333;
+      color: #ffffff; /* White text for headings */
     }
     form {
-      background: white;
+      background: #1F1F1F; /* Slightly darker grey form background */
       padding: 20px;
       border-radius: 5px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
     }
-    input[type="file"] {
+    input[type="file"], input[type="submit"] {
+      background: #333333; /* Dark grey input fields */
+      color: #e0e0e0; /* Light grey text color */
+      border: none;
       margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      width: 100%;
+      box-sizing: border-box; /* Ensures padding doesn't affect width */
+    }
+    input[type="submit"] {
+      background: #4CAF50; /* Green button */
+      cursor: pointer;
+    }
+    input[type="submit"]:hover {
+      background: #45a049; /* Darker green on hover */
     }
     .loader {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #3498db;
+      border: 4px solid #1F1F1F; /* Loader background border */
+      border-top: 4px solid #4CAF50; /* Green loader accent */
       border-radius: 50%;
       width: 30px;
       height: 30px;
       animation: spin 2s linear infinite;
       display: none;
+      margin: auto;
     }
     img#processedImage {
       max-width: 100%;
@@ -120,7 +74,7 @@
     <div class="loader" id="loader"></div>
 </form>
 
-<div class="green">
+<div>
     <img id="processedImage"/>
 </div>
 
@@ -154,3 +108,4 @@
 
 </body>
 </html>
+
