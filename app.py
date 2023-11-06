@@ -1,14 +1,4 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, send_file
-
-@app.before_request
-def before_request():
-    if 'X-Forwarded-For' in request.headers:
-        # In a production application, you should have additional
-        # logic to verify that 'X-Forwarded-For' is being sent by your trusted proxy.
-        # You might also want to take only the first IP in the case of a chain of proxies,
-        # or use a more robust solution like Werkzeug's ProxyFix.
-        request.remote_addr = request.headers['X-Forwarded-For']
-
 from werkzeug.utils import secure_filename
 from main import getPrediction
 import os
@@ -20,6 +10,15 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 #Create an app object using the Flask class. 
 app = Flask(__name__, static_folder="static")
+
+@app.before_request
+def before_request():
+    if 'X-Forwarded-For' in request.headers:
+        # In a production application, you should have additional
+        # logic to verify that 'X-Forwarded-For' is being sent by your trusted proxy.
+        # You might also want to take only the first IP in the case of a chain of proxies,
+        # or use a more robust solution like Werkzeug's ProxyFix.
+        request.remote_addr = request.headers['X-Forwarded-For']
 
 #Add reference fingerprint. 
 #Cookies travel with a signature that they claim to be legit. 
