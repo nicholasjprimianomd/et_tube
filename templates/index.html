@@ -1,4 +1,4 @@
-<!doctype html>
+<!--<!doctype html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -40,12 +40,70 @@
 </form>
 
 <p class="green">
-    <!-- Displaying the image directly -->
-    <!--<img id="processedImage" width="300" height="225"> -->
     <script>
       document.getElementById("processedImage").src = window.location.href;
     </script>
 </p>
+
+</body>
+</html>
+-->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ET Tube Location Prediction</title>
+  <style>
+      img#processedImage {
+      max-width: 100%;
+      height: auto;
+      display: none; /* Start with the image not displayed */
+    }
+  </style>
+</head>
+<body>
+
+<h2>ET Tube Location Prediction</h2>
+<h4>Upload an image and click submit</h4>
+
+<form id="uploadForm" method="post" enctype="multipart/form-data">
+    <dl>
+      <p>
+        <input type="file" name="file" autocomplete="off" required>
+      </p>
+    </dl>
+    <p>
+      <input type="submit" value="Submit">
+    </p>
+</form>
+
+<p class="green">
+    <img id="processedImage" style="display:none;"/>
+</p>
+
+<script>
+  document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    fetch('/', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.blob()) // Assuming the server sends back image data as a blob
+    .then(imageBlob => {
+      // Create a local URL from the image blob and set it as the src of the image tag
+      const imageObjectURL = URL.createObjectURL(imageBlob);
+      const imageElement = document.getElementById('processedImage');
+      imageElement.src = imageObjectURL;
+      imageElement.style.display = 'block'; // Show the image element
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  });
+</script>
 
 </body>
 </html>

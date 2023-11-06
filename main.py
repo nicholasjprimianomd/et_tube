@@ -13,7 +13,7 @@ import os
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 keypoints_classes_ids2names = {0: 'Carina' , 1: 'ETT'}
 
-def get_model(num_keypoints=2, anchor_sizes = (64, 128, 256) , anchor_ratios= (0.5, 0.83, 1.2, 2), weights_path=None):
+def get_model(num_keypoints=2, anchor_sizes = (64, 128, 256) , anchor_ratios= (0.5, 0.83, 1.2, 2)):
     
     backbone = torchvision.models.convnext_large(weights='DEFAULT').features
     backbone.out_channels = 1536
@@ -84,10 +84,11 @@ def getPrediction(file_name):
         best_model.to(device)
         best_model.eval()
 
-        test_img_file = rf"static/images/" + file_name
+        #test_img_file = rf"static/images/" + file_name
+        test_img_file = file_name
         print(test_img_file)
         raw_img = cv2.imread(test_img_file)
-        raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
+        #raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
         #raw_img_processed = test_valid_transform()(image=raw_img)
         #raw_img_processed = raw_img_processed["image"]
         raw_img_processed = torch.from_numpy(raw_img).permute(2,0,1).float().to(device)
