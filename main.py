@@ -3,7 +3,6 @@ import torchvision
 from torchvision.models.detection.rpn import AnchorGenerator
 from torchvision.models.detection import KeypointRCNN
 import cv2
-#import albumentations as A
 import numpy as np
 import io
 from flask import send_file
@@ -33,7 +32,6 @@ def get_model(num_keypoints=2, anchor_sizes = (64, 128, 256) , anchor_ratios= (0
                           box_roi_pool=roi_pooler,
                           keypoint_roi_pool=keypoint_roi_pooler,
                           num_keypoints=num_keypoints)        
-        
     return model
 
 def get_best_keypoints(scores):
@@ -45,7 +43,7 @@ def get_best_keypoints(scores):
         if len(avg_scores) > 0:
             return avg_scores.index(max(avg_scores))
         else:
-            raise ValueError("avg_scores is empty. Make sure you have calculated the average scores before finding the maximum.")
+            raise ValueError("No scores: avg_scores is empty. Make sure you have calculated the average scores before finding the maximum.")
     except ValueError as e:
         print(e)
         return []
@@ -56,7 +54,6 @@ def load_model(model, weights_path):
     return model
 
 IMG_SIZE = 456
-
 
 url = 'https://github.com/nicholasprimiano/et_tube/releases/download/v0.1/production.pth'
 filename = 'production.pth'
@@ -84,16 +81,13 @@ def getPrediction(file_name):
         best_model.to(device)
         best_model.eval()
 
-        #test_img_file = rf"static/images/" + file_name
+
         test_img_file = file_name
         print(test_img_file)
         raw_img = cv2.imread(test_img_file)
-        #raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
-        #raw_img_processed = test_valid_transform()(image=raw_img)
-        #raw_img_processed = raw_img_processed["image"]
+        raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
         raw_img_processed = torch.from_numpy(raw_img).permute(2,0,1).float().to(device)
         raw_img_processed = raw_img_processed.float() / 255.0
-
         output = best_model([raw_img_processed])
 
 
@@ -119,5 +113,3 @@ def getPrediction(file_name):
             return img_io
         else:
             return "Error processing image", 500
-
-#getPrediction("cxr.png")
