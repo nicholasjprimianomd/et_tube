@@ -12,7 +12,7 @@ import os
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 keypoints_classes_ids2names = {0: 'Carina' , 1: 'ETT'}
 
-def get_model(num_keypoints=2, anchor_sizes = (64, 128, 256) , anchor_ratios= (0.5, 0.83, 1.2, 2)):
+def get_model(num_keypoints=2, anchor_sizes = (64, 128, 256) , anchor_ratios= (0.5, 1, 2)):
     
     backbone = torchvision.models.convnext_large(weights='DEFAULT').features
     backbone.out_channels = 1536
