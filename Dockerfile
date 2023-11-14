@@ -14,6 +14,11 @@ COPY production.pth /app/model/
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
+RUN apt-get update \
+    && apt-get install -y libgl1-mesa-glx \
+    && rm -rf /var/lib/apt/lists/*
+
+
 # Make port 80 available to the world outside this container
 EXPOSE 80
 
