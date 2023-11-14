@@ -8,16 +8,18 @@ WORKDIR /app
 COPY . /app
 
 # Copy the ML model file
-COPY production.pth /app/model/
+#COPY production.pth /app/model/
 
 # Install any needed packages specified in requirements.txt
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN apt-get update \
-    && apt install -y libgl1-mesa-glx \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt install gunicorn -y
+# Assuming you have a line to install other dependencies, add libglib2.0-0 to it
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    gunicorn \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
