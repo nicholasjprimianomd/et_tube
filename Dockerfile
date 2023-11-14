@@ -15,12 +15,16 @@ COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN apt-get update \
-    && apt-get install -y libgl1-mesa-glx \
-    && rm -rf /var/lib/apt/lists/*
-
+    && apt install -y libgl1-mesa-glx \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt install gunicorn -y
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
+
+EXPOSE 443
+
+EXPOSE 5000
 
 # Define environment variable
 ENV NAME World
