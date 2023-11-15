@@ -35,4 +35,5 @@ ENV NAME World
 ENV MODEL_PATH /app/model/production.pth
 
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["gunicorn", "--workers", "1", "--bind", "0.0.0.0:5000", "--timeout", "120", "app:app"]
+
