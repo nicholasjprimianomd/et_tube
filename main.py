@@ -53,14 +53,12 @@ def load_model(model, weights_path):
     model.load_state_dict(model_weights['model_state_dict'])
     return model
 
-IMG_SIZE = 456
-
 url = 'https://github.com/nicholasprimiano/et_tube/releases/download/v0.1/production.pth'
 filename = 'production.pth'
 
 # Check if the file already exists
 if os.path.exists(filename):
-    print(f"{filename} already exists.")
+    print(f"Model: {filename} already exists.")
 else:
     response = requests.get(url, allow_redirects=True)
     # Check if the request was successful
@@ -76,16 +74,40 @@ print("Loading model...")
 best_model = load_model(get_model(), 'production.pth')
 print("Loaded model.")
 
+def resize_image_aspect_ratio(img, max_size):
+
+    # Get current dimensions
+    height, width = img.shape[:2]
+
+    # Only resize if the image is larger than the max size
+    if max(height, width) > max_size:
+        # Calculate the ratio
+        ratio = min(max_size/height, max_size/width)
+
+        # Calculate new dimensions
+        new_dimensions = (int(width * ratio), int(height * ratio))
+
+        # Resize the image
+        resized_img = cv2.resize(img, new_dimensions, interpolation=cv2.INTER_AREA)
+        print("Resizing Image")
+        return resized_img
+    else:
+        # Return original image if no resizing is needed
+        return img
+
+
+IMG_SIZE = 1080
+
 def getPrediction(file_name):
     with torch.inference_mode():
         best_model.to(device)
         best_model.eval()
 
-
         test_img_file = file_name
         print(test_img_file)
         raw_img = cv2.imread(test_img_file)
         #raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
+        raw_img = resize_image_aspect_ratio(raw_img, IMG_SIZE)
         raw_img_processed = torch.from_numpy(raw_img).permute(2,0,1).float().to(device)
         raw_img_processed = raw_img_processed.float() / 255.0
         output = best_model([raw_img_processed])

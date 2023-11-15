@@ -33,7 +33,6 @@ def submit_file():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
 
-        # Process the image (your existing processing logic)
         processed_image_io = getPrediction(file_path)
         processed_image_io.seek(0)
 
