@@ -85,7 +85,7 @@ def getPrediction(file_name):
         test_img_file = file_name
         print(test_img_file)
         raw_img = cv2.imread(test_img_file)
-        raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
+        #raw_img = cv2.resize(raw_img, (IMG_SIZE, IMG_SIZE))
         raw_img_processed = torch.from_numpy(raw_img).permute(2,0,1).float().to(device)
         raw_img_processed = raw_img_processed.float() / 255.0
         output = best_model([raw_img_processed])
@@ -105,9 +105,8 @@ def getPrediction(file_name):
                 raw_img = cv2.circle(raw_img.copy(), current_keypoint, 1, (255,255,0), 10)
                 cv2.putText(raw_img, " " + keypoints_classes_ids2names[idx], current_keypoint, cv2.FONT_HERSHEY_PLAIN, 1, (255,0,0), 1, cv2.LINE_AA)
         
-        is_success, buffer = cv2.imencode(".png", raw_img)
-        #cv2.imshow('Image', raw_img)
-        #cv2.waitKey(0)
+        is_success, buffer =  cv2.imencode(".jpg", raw_img, [int(cv2.IMWRITE_JPEG_QUALITY), 80])
+
         if is_success:
             img_io = io.BytesIO(buffer)
             return img_io
