@@ -17,6 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Assuming you have a line to install other dependencies, add libglib2.0-0 to it
 RUN apt-get update && apt-get install -y \
     libgl1-mesa-glx \
+    certbot \
     gunicorn \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
